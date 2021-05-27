@@ -5,21 +5,37 @@ import './App.css';
 
 const App = () => {
   const [data, setData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    const getData = async () => {
-      let res = await axios.get('http://localhost:3001');
-      // console.log(res.data.msg);
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get('http://localhost:3001/usb/devices');
 
-      setData(res.data.msg);
+        // console.log(response);
+
+        if (response.status === 200) {
+          setData(response.data);
+        } else {
+          setIsLoading(false);
+          throw Error('Something went wrong');
+        }
+
+        setIsLoading(false);
+      } catch (err) {
+        setIsLoading(false);
+        setError(err.message);
+      }
     }
 
-    getData();
+    fetchData();
   }, []);
 
   return (
     <div>
-      <p>{data}</p>
+      {isLoading ? <p>Loading..</p> : <p>{JSON.stringify(data)}</p>}
     </div>
   );
 }
