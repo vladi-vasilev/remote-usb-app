@@ -34,9 +34,9 @@ const App = () => {
   }, []);
 
   return (
-    <div>
-      {isLoading ? <p>Loading..</p> : <p>{JSON.stringify(data)}</p>}
-    </div>
+    <pre>
+      {isLoading ? <p>Loading..</p> : JSON.stringify(data, null, 4)}
+    </pre>
   );
 }
 
