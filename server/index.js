@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const usb = require('usb');
+const usbDetect = require('usb-detection');
 const app = express();
 
 const PORT = 3001;
@@ -8,9 +8,18 @@ const PORT = 3001;
 app.use(cors());
 app.use(express.json());
 
+
+usbDetect.startMonitoring();
+
 app.get('/usb/devices', (req, res) => {
-    // console.log(usb.getDeviceList());
-    res.send(usb.getDeviceList());
+    usbDetect.find()
+        .then((devices) => { 
+            // console.log(devices);
+            res.send(devices);
+        }).catch((err) => { 
+            // console.log(err);
+            res.send(err);
+        });
 });
 
 app.listen(PORT, () => {
