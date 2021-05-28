@@ -1,6 +1,6 @@
 import express, { Application } from 'express';
 import cors from 'cors';
-import usbDetect from 'usb-detection';
+import usbDetect, { Device } from 'usb-detection';
 import { Server } from "socket.io";
 import http from "http";
 
@@ -22,11 +22,19 @@ usbDetect.startMonitoring();
 const sendMessageToClient = async (socket: any, device: Object | null) => {
     try {
         const devices = await usbDetect.find();
+        var formattedDevices = devices.reduce((acc: any, cur) => {
+            if (!acc[cur.vendorId]) {
+                acc[cur.vendorId] = [cur];
+                return acc;
+            }
+            acc[cur.vendorId] = [...acc[cur.vendorId], cur];
+            return acc;
+        }, {});
         console.log('change', device);
         socket.emit('receive-message', {
             text: 'pong',
             device,
-            devices
+            devices: formattedDevices
         });
     } catch (err) {
         console.log(err);
