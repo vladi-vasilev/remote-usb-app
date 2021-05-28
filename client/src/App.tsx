@@ -1,18 +1,33 @@
-import React from 'react';
-import useFetch from './customHooks/useFetch';
+import React, { useState, useEffect, useCallback } from 'react';
+import { useSocket } from './contexts/SocketProvider';
 import './App.css';
 
 const App = () => {
-  const { data, isLoading, error } = useFetch('http://localhost:3001/usb/devices', {});
+  const [data, setData] = useState(null);
+  const socket = useSocket();
 
-  if (error) {
-    return <p>{error}</p>;
-  }
+  const receiveMessage = useCallback(({text, device, devices}) => {
+      setData(devices);
+      console.log(text, device, devices);
+  }, [setData]);
+
+  const sendMessage = () => socket.emit('send-message', { text: 'ping' });
+
+  useEffect(() => {
+    if (socket == null) return
+
+    socket.on('receive-message', receiveMessage);
+
+    return () => socket.off('receive-message')
+  }, [socket, receiveMessage]);
 
   return (
-    <pre>
-      {isLoading ? <p>Loading..</p> : JSON.stringify(data, null, 4)}
-    </pre>
+    <>
+      <button onClick={sendMessage}>Send socket event</button>
+      <pre>
+        {JSON.stringify(data, null, 4)}
+      </pre>
+    </>
   );
 }
 
