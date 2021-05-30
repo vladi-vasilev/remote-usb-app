@@ -12,12 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.17.1",
     "usb-detection": "^4.10.0"
   },
   "devDependencies": {
-    "@types/cors": "^2.8.10",
     "@types/express": "^4.17.0",
     "@types/node": "^12.6.9",
     "@types/socket.io": "^3.0.2",

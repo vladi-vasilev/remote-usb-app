@@ -1,5 +1,4 @@
 import express, { Application } from 'express';
-import cors from 'cors';
 import usbDetect, { Device } from 'usb-detection';
 import { Server } from "socket.io";
 import http from "http";
@@ -14,14 +13,14 @@ const io = new Server(server, {
 
 const PORT: Number = Number(process.env.PORT) || 3001;
 
-app.use(cors());
 app.use(express.json());
 
 usbDetect.startMonitoring();
 
-const sendMessageToClient = async (socket: any, device: Object | null) => {
+const sendMessageToClient = async (socket: any, device: Device | null) => {
     try {
         const devices = await usbDetect.find();
+        const isDeviceMounting = device ? devices.some((d) => d.deviceAddress === device.deviceAddress) : false;
         var formattedDevices = devices.reduce((acc: any, cur) => {
             if (!acc[cur.vendorId]) {
                 acc[cur.vendorId] = [cur];
@@ -30,10 +29,10 @@ const sendMessageToClient = async (socket: any, device: Object | null) => {
             acc[cur.vendorId] = [...acc[cur.vendorId], cur];
             return acc;
         }, {});
-        console.log('change', device);
+
         socket.emit('receive-message', {
-            text: 'pong',
             device,
+            isDeviceMounting,
             devices: formattedDevices
         });
     } catch (err) {
@@ -44,13 +43,6 @@ const sendMessageToClient = async (socket: any, device: Object | null) => {
 io.on('connection', (socket: any) => {
     sendMessageToClient(socket, null)
     usbDetect.on('change', (device) => sendMessageToClient(socket, device));
-    socket.on('send-message', ({text}: {text: string}) => {
-        console.log(text);
-        socket.emit('receive-message', {
-            text: 'pong',
-            device: 'test'
-        });
-    });
 });
 
 server.listen(PORT, () => {
