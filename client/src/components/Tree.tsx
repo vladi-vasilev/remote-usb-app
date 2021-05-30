@@ -4,6 +4,8 @@ import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import TreeItem from '@material-ui/lab/TreeItem';
+import { useData } from '../contexts/DataProvider';
+import { useDeviceInfo, DeficeInfo } from '../contexts/DeviceInfoProvider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,7 +16,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Tree = ({data, setDeviceOnView}: {data: any, setDeviceOnView: any}) => {
+const Tree = () => {
+    const data = useData();
+    const { setDeviceOnView } = useDeviceInfo();
     const classes = useStyles();
 
     return (
@@ -23,14 +27,13 @@ const Tree = ({data, setDeviceOnView}: {data: any, setDeviceOnView: any}) => {
             defaultCollapseIcon={<ExpandMoreIcon />}
             defaultExpandIcon={<ChevronRightIcon />}
         >
-            {data && Object.keys(data).map((key: any) => {
-                return (
-                    <TreeItem nodeId={key} label={`Hub: ${key}`} key={key}>
-                        {data[key].map((el: any) => <TreeItem nodeId={el.deviceAddress} label={el.deviceName} key={el.deviceAddress} onClick={() => setDeviceOnView(el)} />)}
-                    </TreeItem>
-                )
-            })
-            }
+            {data && Object.keys(data).map((key: any) => (
+                <TreeItem nodeId={String(key)} label={`Hub: ${key}`} key={key}>
+                    {data[key].map((el: DeficeInfo) => (
+                        <TreeItem nodeId={String(el.deviceAddress)} label={el.deviceName} key={el.deviceAddress} onClick={() => setDeviceOnView(el)} />
+                    ))}
+                </TreeItem>
+            ))}
         </TreeView>
     );
 };

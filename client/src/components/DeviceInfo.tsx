@@ -4,6 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Divider from '@material-ui/core/Divider';
+import { useDeviceInfo } from '../contexts/DeviceInfoProvider';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -14,11 +15,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const DeviceInfo = ({device}: {device: any}) => {
-    console.log(device);
+const DeviceInfo = () => {
+    const { deviceInfo } = useDeviceInfo();
     const classes = useStyles();
 
-    if (!device) {
+    if (!deviceInfo) {
         return (
             <div className={classes.root}>
                 <h1>Device Info:</h1>
@@ -32,22 +33,22 @@ const DeviceInfo = ({device}: {device: any}) => {
             <h1>Device Info:</h1>
             <List component="nav" aria-label="main mailbox folders">
                 <ListItem button>
-                    <ListItemText primary={`Device Name: ${device.deviceName}`} />
+                    <ListItemText primary={`Device Name: ${deviceInfo.deviceName}`} />
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary={`Manufacturer: ${device.manufacturer}`} />
+                    <ListItemText primary={`Manufacturer: ${deviceInfo.manufacturer}`} />
                 </ListItem>
             </List>
             <Divider />
             <List component="nav" aria-label="secondary mailbox folders">
                 <ListItem button>
-                    <ListItemText primary={`Vendor ID: ${device.vendorId}`} />
+                    <ListItemText primary={`Vendor ID: ${deviceInfo.vendorId}`} />
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary={`Product ID: ${device.productId}`} />
+                    <ListItemText primary={`Product ID: ${deviceInfo.productId}`} />
                 </ListItem>
                 <ListItem button>
-                    <ListItemText primary={`Device Address: ${device.deviceAddress}`} />
+                    <ListItemText primary={`Device Address: ${deviceInfo.deviceAddress}`} />
                 </ListItem>
             </List>
         </div>

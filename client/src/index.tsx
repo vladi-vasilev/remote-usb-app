@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import { SocketProvider } from './contexts/SocketProvider';
+import { DataProvider } from './contexts/DataProvider';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <SocketProvider>
+  <SocketProvider>
+    <DataProvider>
       <App />
-    </SocketProvider>
-  </React.StrictMode>,
+    </DataProvider>
+  </SocketProvider>,
   document.getElementById('root')
 );
